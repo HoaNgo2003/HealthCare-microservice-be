@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Env files
+.env
+*.env
+
+# Django DB
+db.sqlite3
+
+# VSCode settings
+.vscode/
+
+# Migrations (tùy chọn, nếu bạn không muốn push migrations)
+*/migrations/
+!*/migrations/__init__.py
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Python virtual environments
+venv/
+ENV/
+env/
