@@ -79,8 +79,9 @@ class CheckRoleView(APIView):
 class UserDetailView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny]
     lookup_field = 'id'
+
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
