@@ -13,6 +13,17 @@ class MedicalRecordCreateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, pk):
+        try:
+            record = MedicalRecord.objects.get(pk=pk)
+            serializer = MedicalRecordSerializer(record, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except MedicalRecord.DoesNotExist:
+            return Response({'detail': 'Medical Record not found'}, status=status.HTTP_404_NOT_FOUND)
+    
 
 class PrescriptionCreateView(APIView):
     def post(self, request):
@@ -21,6 +32,16 @@ class PrescriptionCreateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, pk):
+        try:
+            prescription = Prescription.objects.get(pk=pk)
+            serializer = PrescriptionSerializer(prescription, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Prescription.DoesNotExist:
+            return Response({'detail': 'Prescription not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetListMedicalRecordView(APIView):
