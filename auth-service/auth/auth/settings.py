@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'accounts.User'
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # thời gian sống của access token
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # thời gian sống của access token
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # thời gian sống của refresh token
     # bạn có thể tùy chỉnh thêm nếu cần
 }
