@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from .models import Appointment
-from .serializers import AppointmentSerializer, AppointmentStatusUpdateSerializer
+from .serializers import AppointmentSerializer, AppointmentStatusUpdateSerializer, AppointmentUpdateSerializer
 import requests
 
 AUTH_SERVICE_USERINFO_URL = 'http://127.0.0.1:8000/api/accounts/auth/profile/'  # sửa url authservice phù hợp
@@ -114,3 +114,29 @@ class GetListAppointmentByStatus(APIView):
         appointments = Appointment.objects.filter(status=status).order_by('-appointment_time')
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
+    
+class AppointmentUpdateView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def put(self, request, appointment_id):
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+        except Appointment.DoesNotExist:
+            return Response({'detail': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AppointmentUpdateSerializer(appointment, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'detail': 'Appointment updated successfully'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AppointmentDeleteView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def delete(self, request, appointment_id):
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+            appointment.delete()
+            return Response({'detail': 'Appointment deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+        except Appointment.DoesNotExist:
+            return Response({'detail': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)

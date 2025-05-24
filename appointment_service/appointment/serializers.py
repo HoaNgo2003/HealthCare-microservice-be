@@ -29,3 +29,9 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 class AppointmentStatusUpdateSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Appointment.STATUS_CHOICES)
+
+class AppointmentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'  # Cho phép cập nhật tất cả các trường
+        
