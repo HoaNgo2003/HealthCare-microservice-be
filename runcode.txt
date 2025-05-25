@@ -1,0 +1,14 @@
+cd auth-service/auth
+python manage.py runserver
+
+cd appointment_service
+python manage.py runserver 8002
+
+cd medical_service
+python manage.py runserver 8003
+
+cd pharmacist_service
+python manage.py runserver 8004
+
+cd chatbot_service
+python manage.py runserver 8005
