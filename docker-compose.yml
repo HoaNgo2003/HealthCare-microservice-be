@@ -37,6 +37,15 @@ services:
     networks:
       - backend
 
+  chatbot_service:
+    build: ./chatbot_service
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./chatbot_service:/app
+    networks:
+      - backend
+
   gateway_service:
     build: ./gateway_service
     ports:
@@ -48,6 +57,7 @@ services:
       - appointment_service
       - medical_service
       - pharmacist_service
+      - chatbot_service
     networks:
       - backend
 
