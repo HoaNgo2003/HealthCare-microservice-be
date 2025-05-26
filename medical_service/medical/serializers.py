@@ -8,7 +8,7 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 PROFILE_URL = getattr(
-    settings, "PROFILE_URL", "http://127.0.0.1:8000/api/accounts/auth/users/"
+    settings, "PROFILE_URL", "http://127.0.0.1:8000/api/auth/accounts/auth/users/"
 )
 
 

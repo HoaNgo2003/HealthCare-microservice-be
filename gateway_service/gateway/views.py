@@ -16,11 +16,16 @@ def proxy_view(request, service, path):
     if service not in SERVICE_MAP:
         return JsonResponse({"error": "Service not found"}, status=404)
 
-    url = f"{SERVICE_MAP[service]}/{path}"
+    print(f"service={service}")
+
+    url = f"{SERVICE_MAP[service]}/api/{service}/{path}"
+
+    print(f"url={url}")
 
     # Lọc các headers hợp lệ (bỏ Content-Length, Host,...)
     headers = {
-        key: value for key, value in request.headers.items()
+        key: value
+        for key, value in request.headers.items()
         if key.lower() not in ["host", "content-length"]
     }
 
@@ -32,14 +37,14 @@ def proxy_view(request, service, path):
                 url=url,
                 headers=headers,
                 content=request.body,  # body cần giữ nguyên
-                timeout=10.0
+                timeout=10.0,
             )
 
         return HttpResponse(
             response.content,
             status=response.status_code,
-            content_type=response.headers.get("content-type", "application/json")
+            content_type=response.headers.get("content-type", "application/json"),
         )
 
     except httpx.RequestError as e:
-        return JsonResponse({"error": str(e)}, status=502)
+        return JsonResponse({"error": f"url={url}, {str(e)}"}, status=502)

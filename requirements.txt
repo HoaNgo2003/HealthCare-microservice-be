@@ -5,3 +5,11 @@ tensorflow==2.16.2
 keras==3.10.0
 tf_keras==2.16.0
 httpx
+langchain==0.3.25
+langchain_community==0.3.24
+langchain_huggingface==0.2.0
+faiss-cpu==1.11.0
+pypdf==5.5.0
+wikipedia==1.4.0
+transformers==4.51.3
+deep-translator==1.11.4
