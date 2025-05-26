@@ -12,3 +12,6 @@ python manage.py runserver 8004
 
 cd chatbot_service
 python manage.py runserver 8005
+
+cd gateway_service
+python manage.py runserver 8001

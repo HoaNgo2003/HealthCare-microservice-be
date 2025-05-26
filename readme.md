@@ -52,3 +52,5 @@ Hệ thống quản lý bệnh viện được xây dựng theo kiến trúc **m
 
 - Tải thư viện bản mới nhất
 - xóa hết migration và tạo lại db
+- makemigration & migrate before run docker
+- http://<GATEWAY_HOST>:<GATEWAY_PORT>/api/<service_name>/<service_api_path>

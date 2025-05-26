@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build: ./auth-service/auth
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./auth-service/auth:/app
+    networks:
+      - backend
+
+  appointment_service:
+    build: ./appointment_service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./appointment_service:/app
+    networks:
+      - backend
+
+  medical_service:
+    build: ./medical_service
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./medical_service:/app
+    networks:
+      - backend
+
+  pharmacist_service:
+    build: ./pharmacist_service
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./pharmacist_service:/app
+    networks:
+      - backend
+
+  gateway_service:
+    build: ./gateway_service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./gateway_service:/app
+    depends_on:
+      - auth-service
+      - appointment_service
+      - medical_service
+      - pharmacist_service
+    networks:
+      - backend
+
+networks:
+  backend:

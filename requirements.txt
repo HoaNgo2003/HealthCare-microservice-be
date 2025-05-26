@@ -4,3 +4,4 @@ sqlparse==0.5.3
 tensorflow==2.16.2
 keras==3.10.0
 tf_keras==2.16.0
+httpx
