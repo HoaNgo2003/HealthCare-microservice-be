@@ -11,7 +11,7 @@ from .serializers import (
 )
 from rest_framework.permissions import AllowAny
 
-AUTH_SERVICE_USERINFO_URL = "http://127.0.0.1:8000/api/auth/accounts/auth/profile/"
+AUTH_SERVICE_USERINFO_URL = "http://auth-service:8000/api/auth/accounts/auth/profile/"
 
 
 class PatientBaseView(APIView):

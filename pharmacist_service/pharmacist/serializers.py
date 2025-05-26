@@ -27,7 +27,7 @@ class DrugDistributionSerializer(serializers.ModelSerializer):
     def get_doctor_info(self, obj):
         try:
             resp = requests.get(
-                f"http://127.0.0.1:8000/api/auth/accounts/auth/users/{obj.doctor_id}/"
+                f"http://auth-service:8000/api/auth/accounts/auth/users/{obj.doctor_id}/"
             )
             if resp.status_code == 200:
                 return resp.json()
@@ -39,7 +39,7 @@ class DrugDistributionSerializer(serializers.ModelSerializer):
     def get_drug_info(self, obj):
         try:
             resp = requests.get(
-                f"http://127.0.0.1:8004/api/pharmacist/pharmacist/{obj.drug_type_id}/"
+                f"http://pharmacist-service:8004/api/pharmacist/pharmacist/{obj.drug_type_id}/"
             )
             if resp.status_code == 200:
                 return resp.json()

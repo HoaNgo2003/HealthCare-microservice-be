@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Appointment
 import requests
 
-PROFILE_URL = "http://127.0.0.1:8000/api/auth/accounts/auth/users/"
+PROFILE_URL = "http://auth-service:8000/api/auth/accounts/auth/users/"
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
