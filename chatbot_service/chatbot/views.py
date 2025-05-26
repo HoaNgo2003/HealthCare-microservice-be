@@ -8,11 +8,17 @@ from langchain.chains.retrieval_qa.base import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from dotenv import load_dotenv, find_dotenv
+from deep_translator import GoogleTranslator
 
 import os
 
 # Load environment variables (HF_TOKEN, etc.)
 load_dotenv(find_dotenv())
+
+
+def translate_to_vietnamese(text):
+    return GoogleTranslator(source="auto", target="vi").translate(text)
+
 
 # Load LLM
 HF_TOKEN = os.environ.get("HF_TOKEN")
@@ -88,7 +94,9 @@ class ChatbotVer1View(APIView):
                 for doc in result["source_documents"]
             ]
 
-            return Response({"reply": answer, "sources": sources})
+            vietnamese_answer = translate_to_vietnamese(answer)
+
+            return Response({"reply": vietnamese_answer, "sources": sources})
 
         except Exception as e:
             return Response(
@@ -356,8 +364,14 @@ class PredictDiseaseChatbotView(APIView):
             predicted = predict_disease(input_data, model_type)
             disease_info = get_disease_info(predicted)
 
+            vietnamese_predicted = translate_to_vietnamese(predicted)
+            vietnamese_disease_info = translate_to_vietnamese(disease_info)
+
             return Response(
-                {"predicted_disease": predicted, "disease_info": disease_info},
+                {
+                    "predicted_disease": vietnamese_predicted,
+                    "disease_info": vietnamese_disease_info,
+                },
                 status=200,
             )
 
