@@ -9,7 +9,7 @@ from .serializers import (
 )
 import requests
 
-AUTH_SERVICE_USERINFO_URL = "http://127.0.0.1:8000/api/auth/accounts/auth/profile/"  # sửa url authservice phù hợp
+AUTH_SERVICE_USERINFO_URL = "http://auth-service:8000/api/auth/accounts/auth/profile/"  # sửa url authservice phù hợp
 
 
 class AppointmentView(APIView):

@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   auth-service:
-    build: ./auth-service/auth
+    container_name: auth-service
+    build:
+      context: ./auth-service/auth
     ports:
       - "8000:8000"
     volumes:
@@ -11,7 +13,9 @@ services:
       - backend
 
   appointment_service:
-    build: ./appointment_service
+    container_name: appointment_service
+    build:
+      context: ./appointment_service
     ports:
       - "8002:8002"
     volumes:
@@ -20,7 +24,9 @@ services:
       - backend
 
   medical_service:
-    build: ./medical_service
+    container_name: medical_service
+    build:
+      context: ./medical_service
     ports:
       - "8003:8003"
     volumes:
@@ -28,8 +34,10 @@ services:
     networks:
       - backend
 
-  pharmacist_service:
-    build: ./pharmacist_service
+  pharmacist-service:
+    container_name: pharmacist-service
+    build:
+      context: ./pharmacist_service
     ports:
       - "8004:8004"
     volumes:
@@ -38,7 +46,9 @@ services:
       - backend
 
   chatbot_service:
-    build: ./chatbot_service
+    container_name: chatbot_service
+    build:
+      context: ./chatbot_service
     ports:
       - "8005:8005"
     volumes:
@@ -47,7 +57,9 @@ services:
       - backend
 
   gateway_service:
-    build: ./gateway_service
+    container_name: gateway_service
+    build:
+      context: ./gateway_service
     ports:
       - "8001:8001"
     volumes:
@@ -56,10 +68,11 @@ services:
       - auth-service
       - appointment_service
       - medical_service
-      - pharmacist_service
+      - pharmacist-service
       - chatbot_service
     networks:
       - backend
 
 networks:
   backend:
+    driver: bridge
