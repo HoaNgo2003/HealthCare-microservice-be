@@ -1,16 +1,51 @@
 from rest_framework import serializers
-from .models import MedicalRecord, Appointment
+from .models import Appointment
+import requests
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MedicalRecord
-        fields = '__all__'
+PROFILE_URL = "http://auth-service:8000/api/auth/accounts/auth/users/" #test
+
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    doctor_info = serializers.SerializerMethodField()
+    patient_info = serializers.SerializerMethodField()
+
     class Meta:
         model = Appointment
-        fields = '__all__'
+        fields = [
+            "id",
+            "appointment_time",
+            "status",
+            "notes",
+            "doctor_info",
+            "patient_info",
+        ]
 
-class AppointmentCreateSerializer(serializers.Serializer):
-    doctor_id = serializers.IntegerField()
-    appointment_time = serializers.DateTimeField()
+    def get_doctor_info(self, obj):
+        try:
+            response = requests.get(f"{PROFILE_URL}{obj.doctor_id}/")
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return None
+        except requests.RequestException as e:
+            return None
+
+    def get_patient_info(self, obj):
+        try:
+            response = requests.get(f"{PROFILE_URL}{obj.patient_id}/")
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return None
+        except requests.RequestException as e:
+            return None
+
+
+class AppointmentStatusUpdateSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=Appointment.STATUS_CHOICES)
+
+
+class AppointmentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = "__all__"  # Cho phép cập nhật tất cả các trường

@@ -1,9 +1,12 @@
-# medical/urls.py
-
 from django.urls import path
 from .views import MedicalRecordCreateView, PrescriptionCreateView, GetListMedicalRecordView, GetListPrescriptionView, GetMedicalRecordByIdView, GetPrescriptionByIdView, GetListMedicalRecordByPatientIdView, GetListPrescriptionByPatientIdView, GetListMedicalRecordByDoctorIdView, GetListPrescriptionByDoctorIdView, DeleteMedicalRecordView, DeletePrescriptionView
+from .views import DoctorAppointmentsView, UpdateAppointmentStatusView, DeleteAppointmentView
 
 urlpatterns = [
+    path('appointments/doctor/<int:doctor_id>/', DoctorAppointmentsView.as_view()),
+    path('appointments/<int:appointment_id>/status/', UpdateAppointmentStatusView.as_view()),
+    path('appointments/<int:appointment_id>/delete/', DeleteAppointmentView.as_view()),
+    
     path('medical-records/', MedicalRecordCreateView.as_view(), name='create-medical-record'),
     path('medical-records/<int:pk>/', MedicalRecordCreateView.as_view(), name='update-medical-record'),
     path('prescriptions/', PrescriptionCreateView.as_view(), name='create-prescription'),
