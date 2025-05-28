@@ -1,17 +1,15 @@
-# medical/serializers.py
-
 from rest_framework import serializers
-from .models import MedicalRecord, Prescription
+ 
 import requests
 import logging
 from django.conf import settings
-
+from .models import MedicalRecord, Prescription
 logger = logging.getLogger(__name__)
-PROFILE_URL = getattr(
+PROFILE_URL = "http://auth-service:8000/api/auth/accounts/auth/users/"
+AUTH_URL = getattr(
     settings, "PROFILE_URL", "http://auth-service:8000/api/auth/accounts/auth/users/"
 )
-
-
+ 
 def fetch_user_info(user_id, token=None):
     url = f"{PROFILE_URL}{user_id}/"
     headers = {}

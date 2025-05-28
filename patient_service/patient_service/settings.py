@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)t5s*y)ooy#d-ynb_jd1bvz$uil@dj2fmyx$t+3%fpvku)s_uh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),

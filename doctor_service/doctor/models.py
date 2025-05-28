@@ -1,15 +1,11 @@
-# medical/models.py
-
 from django.db import models
-
 
 class MedicalRecord(models.Model):
     patient_id = models.CharField(max_length=100)  # ID từ AuthService
     doctor_id = models.CharField(max_length=100)  # ID từ DoctorService
     description = models.TextField()
     diagnosis = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     def __str__(self):
         return f"Medical Record for Patient {self.patient_id}"
 
