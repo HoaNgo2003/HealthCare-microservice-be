@@ -1,6 +1,6 @@
 import requests
 
-PATIENT_SERVICE_BASE_URL = "http://patient_service:8002/api"
+PATIENT_SERVICE_BASE_URL = "http://patient-service:8002/api"
 
 def get_appointments_by_doctor(doctor_id):
     url = f"{PATIENT_SERVICE_BASE_URL}/patients/appointments/doctor/{doctor_id}"

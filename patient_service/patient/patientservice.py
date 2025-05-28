@@ -1,6 +1,6 @@
 import requests
 
-MEDICAL_SERVICE_BASE_URL = "http://doctor_service:8006/api"
+MEDICAL_SERVICE_BASE_URL = "http://doctor-service:8006/api"
 
 def get_medical_records_by_patient(patient_id):
     url = f"{MEDICAL_SERVICE_BASE_URL}/medical-records/patient/{patient_id}/"

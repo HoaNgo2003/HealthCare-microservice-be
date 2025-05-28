@@ -12,8 +12,8 @@ services:
     networks:
       - backend
 
-  patient_service:
-    container_name: patient_service
+  patient-service:
+    container_name: patient-service
     build:
       context: ./patient_service
     ports:
@@ -23,8 +23,8 @@ services:
     networks:
       - backend
 
-  doctor_service:
-    container_name: doctor_service
+  doctor-service:
+    container_name: doctor-service
     build:
       context: ./doctor_service
     ports:
@@ -45,16 +45,16 @@ services:
     networks:
       - backend
 
-  # chatbot_service:
-  #   container_name: chatbot_service
-  #   build:
-  #     context: ./chatbot_service
-  #   ports:
-  #     - "8005:8005"
-  #   volumes:
-  #     - ./chatbot_service:/app
-  #   networks:
-  #     - backend
+  chatbot_service:
+    container_name: chatbot_service
+    build:
+      context: ./chatbot_service
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./chatbot_service:/app
+    networks:
+      - backend
 
 networks:
   backend:
