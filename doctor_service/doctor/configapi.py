@@ -1,6 +1,7 @@
 import requests
 
-PATIENT_SERVICE_BASE_URL = "http://patient_service:8002/api"
+PATIENT_SERVICE_BASE_URL = "http://patient-service:8002/api"
+
 
 def get_appointments_by_doctor(doctor_id):
     url = f"{PATIENT_SERVICE_BASE_URL}/patients/appointments/doctor/{doctor_id}"
@@ -13,6 +14,7 @@ def get_appointments_by_doctor(doctor_id):
         print(f"Error fetching doctor appointments: {e}")
         return None
 
+
 def update_appointment_status(appointment_id, new_status):
     url = f"{PATIENT_SERVICE_BASE_URL}/patients/appointments/{appointment_id}/status"
     try:
@@ -21,6 +23,7 @@ def update_appointment_status(appointment_id, new_status):
     except requests.RequestException as e:
         print(f"Error updating appointment status: {e}")
         return None
+
 
 def delete_appointment(appointment_id):
     url = f"{PATIENT_SERVICE_BASE_URL}/delete/{appointment_id}"
