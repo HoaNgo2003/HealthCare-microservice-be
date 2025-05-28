@@ -13,3 +13,4 @@ pypdf==5.5.0
 wikipedia==1.4.0
 transformers==4.51.3
 deep-translator==1.11.4
+matplotlib==3.10.3

@@ -11,6 +11,9 @@ from dotenv import load_dotenv, find_dotenv
 from deep_translator import GoogleTranslator
 
 import os
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Load environment variables (HF_TOKEN, etc.)
 load_dotenv(find_dotenv())
@@ -379,3 +382,238 @@ class PredictDiseaseChatbotView(APIView):
             return Response({"error": f"Thiếu trường: {str(e)}"}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
+# chatbot_service/views.py (phần thêm API training model)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error,
+    mean_absolute_percentage_error,
+)
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, SimpleRNN, Conv1D, MaxPooling1D, Flatten, Dropout
+from keras.optimizers import Adam
+import matplotlib.pyplot as plt
+import os
+
+
+class TrainModelView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            data = pd.read_csv("health_10_disease_data.csv")
+            label_encoder = LabelEncoder()
+            data["Disease"] = label_encoder.fit_transform(data["Disease"])
+
+            X = data.drop("Disease", axis=1).values
+            y = data["Disease"].values
+
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.2, random_state=42
+            )
+
+            scaler = MinMaxScaler()
+            X_train = scaler.fit_transform(X_train)
+            X_test = scaler.transform(X_test)
+
+            X_train_rnn = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+            X_test_rnn = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+
+            def build_cnn():
+                model = Sequential()
+                model.add(
+                    Conv1D(
+                        64,
+                        2,
+                        activation="relu",
+                        input_shape=(X_train.shape[1], 1),
+                        padding="same",
+                    )
+                )
+                model.add(MaxPooling1D(2))
+                model.add(Conv1D(128, 2, activation="relu", padding="same"))
+                model.add(MaxPooling1D(2))
+                model.add(Conv1D(256, 2, activation="relu", padding="same"))
+                model.add(Flatten())
+                model.add(Dense(128, activation="relu"))
+                model.add(Dropout(0.5))
+                model.add(Dense(1))
+                model.compile(optimizer=Adam(), loss="mse")
+                return model
+
+            def build_rnn():
+                model = Sequential()
+                model.add(
+                    SimpleRNN(
+                        64,
+                        input_shape=(X_train_rnn.shape[1], 1),
+                        activation="relu",
+                        return_sequences=True,
+                    )
+                )
+                model.add(SimpleRNN(128, activation="relu", return_sequences=True))
+                model.add(SimpleRNN(256, activation="relu", return_sequences=True))
+                model.add(SimpleRNN(128, activation="relu", return_sequences=True))
+                model.add(SimpleRNN(64, activation="relu"))
+                model.add(Dense(128, activation="relu"))
+                model.add(Dense(1))
+                model.compile(optimizer=Adam(), loss="mse")
+                return model
+
+            def build_lstm():
+                model = Sequential()
+                model.add(
+                    LSTM(
+                        64, input_shape=(X_train_rnn.shape[1], 1), return_sequences=True
+                    )
+                )
+                model.add(LSTM(128, return_sequences=True))
+                model.add(LSTM(256, return_sequences=True))
+                model.add(LSTM(128, return_sequences=True))
+                model.add(LSTM(64, return_sequences=False))
+                model.add(Dense(128, activation="relu"))
+                model.add(Dense(1))
+                model.compile(optimizer=Adam(), loss="mse")
+                return model
+
+            models = {"CNN": build_cnn(), "RNN": build_rnn(), "LSTM": build_lstm()}
+            errors = {}
+
+            for name, model in models.items():
+                if name == "CNN":
+                    X_train_input = X_train.reshape(
+                        (X_train.shape[0], X_train.shape[1], 1)
+                    )
+                    X_test_input = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+                else:
+                    X_train_input = X_train_rnn
+                    X_test_input = X_test_rnn
+
+                history = model.fit(
+                    X_train_input,
+                    y_train,
+                    epochs=100,
+                    batch_size=64,
+                    validation_data=(X_test_input, y_test),
+                    verbose=0,
+                )
+
+                y_pred = model.predict(X_test_input)
+                mae = mean_absolute_error(y_test, y_pred)
+                mse = mean_squared_error(y_test, y_pred)
+                rmse = np.sqrt(mse)
+                mape = mean_absolute_percentage_error(y_test, y_pred)
+
+                errors[name] = {"MAE": mae, "MSE": mse, "RMSE": rmse, "MAPE": mape}
+
+                model.save(f"{name}_model.h5")
+
+            return Response(
+                {
+                    "message": "Models trained and saved successfully.",
+                    "metrics": errors,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class GenerateDataView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            num_samples = int(
+                request.data.get("num_samples", 20000)
+            )  # cho phép truyền số lượng mẫu
+
+            np.random.seed(42)
+
+            age = np.random.randint(18, 80, size=num_samples)
+            blood_pressure = np.random.randint(90, 180, size=num_samples)
+            cholesterol = np.random.randint(150, 300, size=num_samples)
+            bmi = np.random.uniform(18.5, 40, size=num_samples)
+            blood_sugar = np.random.randint(70, 200, size=num_samples)
+            creatinine = np.random.uniform(0.5, 2.5, size=num_samples)
+
+            disease_heart = (blood_pressure > 140) | (cholesterol > 250)
+            disease_diabetes = blood_sugar > 150
+            disease_hypertension = blood_pressure > 160
+            disease_obesity = bmi > 30
+            disease_kidney = creatinine > 1.5
+            disease_cancer = (age > 50) & (cholesterol > 250)
+            disease_dyslipidemia = cholesterol > 240
+            disease_type2_diabetes = (blood_sugar > 130) & (age > 40)
+            disease_metabolic_syndrome = (bmi > 30) & (blood_pressure > 140)
+            disease_arthritis = (age > 45) & (bmi > 25)
+
+            disease = np.select(
+                [
+                    disease_heart,
+                    disease_diabetes,
+                    disease_hypertension,
+                    disease_obesity,
+                    disease_kidney,
+                    disease_cancer,
+                    disease_dyslipidemia,
+                    disease_type2_diabetes,
+                    disease_metabolic_syndrome,
+                    disease_arthritis,
+                ],
+                [
+                    "Heart Disease",
+                    "Diabetes",
+                    "Hypertension",
+                    "Obesity",
+                    "Kidney Disease",
+                    "Cancer",
+                    "Dyslipidemia",
+                    "Type 2 Diabetes",
+                    "Metabolic Syndrome",
+                    "Arthritis",
+                ],
+                default="No Disease",
+            )
+
+            data = pd.DataFrame(
+                {
+                    "Age": age,
+                    "Blood Pressure": blood_pressure,
+                    "Cholesterol": cholesterol,
+                    "BMI": bmi,
+                    "Blood Sugar": blood_sugar,
+                    "Creatinine": creatinine,
+                    "Disease": disease,
+                }
+            )
+
+            output_path = "health_10_disease_data.csv"
+            data.to_csv(output_path, index=False)
+
+            return Response(
+                {
+                    "message": "Synthetic health data generated successfully.",
+                    "file": output_path,
+                    "samples": num_samples,
+                }
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
