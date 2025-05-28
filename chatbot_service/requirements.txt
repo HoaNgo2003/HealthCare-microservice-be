@@ -25,3 +25,4 @@ pandas==2.2.3
 keras==3.10.0
 tensorflow==2.16.2
 tf_keras==2.16.0
+matplotlib==3.10.3

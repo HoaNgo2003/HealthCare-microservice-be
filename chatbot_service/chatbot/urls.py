@@ -4,6 +4,8 @@ from .views import (
     BuildMemoryView,
     ScrapeToPDFView,
     PredictDiseaseChatbotView,
+    TrainModelView,
+    GenerateDataView,
 )
 
 urlpatterns = [
@@ -22,5 +24,15 @@ urlpatterns = [
         "chatbot/ver2/ask",
         PredictDiseaseChatbotView.as_view(),
         name="chatbot-ver2-chat",
+    ),
+    path(
+        "chatbot/ver2/train",
+        TrainModelView.as_view(),
+        name="chatbot-ver2-train",
+    ),
+    path(
+        "chatbot/ver2/generate-data",
+        GenerateDataView.as_view(),
+        name="chatbot-ver2-generate-data",
     ),
 ]
